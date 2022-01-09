@@ -5,3 +5,5 @@ mypy
 pytest
 httpx
 fastapi
+gunicorn
+uvicorn
