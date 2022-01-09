@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.core import StoreCore
 from app.core.receipt.interactor import IReceiptRepository
 from app.infra.api import receipt_api
 from app.infra.in_memory import ReceiptRepository
