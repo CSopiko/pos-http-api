@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from starlette.requests import Request
 
 from app.core import StoreCore
 from app.core.cashier.interactor import (
@@ -10,16 +11,13 @@ from app.core.receipt.interactor import (
     AddItemRequest,
     FetchReceiptRequest,
     FetchReceiptResponse,
-    ReceiptInteractor,
 )
-from app.infra.in_memory import ReceiptRepository
 
 receipt_api = APIRouter()
 
 
-def get_core() -> StoreCore:
-
-    return StoreCore(ReceiptInteractor(ReceiptRepository()))
+def get_core(request: Request) -> StoreCore:
+    return request.app.state.core
 
 
 @receipt_api.post("/open_receipt/{cashier_id}")
@@ -54,4 +52,3 @@ def close_receipt(
 @receipt_api.get("/x_report/{date}")
 def x_report(date: str, core: StoreCore = Depends(get_core)) -> None:
     core.x_report(date)
-    pass
