@@ -5,6 +5,7 @@ from app.core.cashier.interactor import (
     OpenReceiptRequest,
     OpenReceiptResponse,
 )
+from app.core.manager import XReportRequest, XReportResponse
 from app.core.receipt.interactor import (
     AddItemRequest,
     FetchReceiptRequest,
@@ -32,8 +33,8 @@ class StoreCore:
     def close_receipt(self, request: CloseReceiptRequest) -> None:
         self.receipt_interactor.close_receipt(request)
 
-    def x_report(self, date: str) -> None:
-        pass
+    def x_report(self, request: XReportRequest) -> XReportResponse:
+        return self.receipt_interactor.x_report(request)
 
     @classmethod
     def create(cls, receipt_repository: IReceiptRepository) -> "StoreCore":

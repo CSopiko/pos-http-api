@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from typing import Dict, List, Protocol
+from typing import List, Protocol
 
 from app.core.cashier.interactor import (
     CloseReceiptRequest,
     OpenReceiptRequest,
     OpenReceiptResponse,
 )
+from app.core.manager import XReport, XReportRequest, XReportResponse
 
 
 @dataclass
@@ -23,9 +24,9 @@ class AddItemRequest:
 
 @dataclass
 class Receipt:
-    receipt_id: str
     cashier_id: str
     items: List[Item]
+    receipt_id: str = "0"
 
     def how_much(self) -> int:
         count = 0
@@ -43,12 +44,10 @@ class FetchReceiptRequest:
 class FetchReceiptResponse:
     receipt_id: str
     items: List[Item]
+    total: float
 
 
 class IReceiptRepository(Protocol):
-    open_receipts: Dict[str, Receipt]
-    receipt_id: int
-
     def fetch_open_receipt(self, cashier_id: str) -> Receipt:
         pass
 
@@ -61,6 +60,9 @@ class IReceiptRepository(Protocol):
     def add_item(self, item_id: str, cashier_id: str) -> None:
         pass
 
+    def x_report(self, date: str) -> XReport:
+        pass
+
 
 @dataclass
 class ReceiptInteractor:
@@ -70,7 +72,9 @@ class ReceiptInteractor:
         receipt = self.receipt_repository.fetch_open_receipt(
             cashier_id=request.cashier_id
         )
-        return FetchReceiptResponse(receipt_id=receipt.receipt_id, items=receipt.items)
+        return FetchReceiptResponse(
+            receipt_id=receipt.receipt_id, items=receipt.items, total=receipt.how_much()
+        )
 
     def open_receipt(self, request: OpenReceiptRequest) -> OpenReceiptResponse:
         receipt = self.receipt_repository.open_receipt(request.cashier_id)
@@ -81,3 +85,11 @@ class ReceiptInteractor:
 
     def add_item(self, request: AddItemRequest) -> None:
         self.receipt_repository.add_item(request.item_id, request.cashier_id)
+
+    def x_report(self, request: XReportRequest) -> XReportResponse:
+        x_resp = self.receipt_repository.x_report(date=request.date)
+        return XReportResponse(
+            revenue=x_resp.revenue,
+            sold_item_count=x_resp.sold_item_count,
+            num_closed_receipts=x_resp.num_closed_receipts,
+        )
