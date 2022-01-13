@@ -26,7 +26,7 @@ Within the scope of this assignment, we are going to design a service with HTTP 
 - X reports contain revenue, count of each item sold, and number of closed receipts (on a given day).
 - Registration/Authorization is out of scope, all endpoints should be available for everyone.
 - UI and Concurancy are out of scope.
-- Use [SQLite](https://docs.python.org/3/library/sqlite3.html)) for persistence.
+- Use [SQLite](https://docs.python.org/3/library/sqlite3.html) for persistence.
 - Use [FastAPI](https://fastapi.tiangolo.com/) as a web framework.
 
 
